@@ -5,31 +5,44 @@ Domain: https://www.fishtableinsider.com
 
 CONTENTS
 --------
-index.html              Root redirect -> guides.html (so the bare domain works)
-guides.html             Main site: tips hub, state matrix, articles, email capture, admin
-states/*.html           16 standalone state pages (real crawlable URLs for Local SEO)
-assets/ok-*.jpg         Images used by the site
-sitemap.xml             Search-engine sitemap (lists guides.html + all state pages)
-robots.txt              Points crawlers to the sitemap
+index.html              MAIN SITE (the homepage at /): tips hub, state matrix, articles,
+                        email capture, admin. The bare domain serves this directly.
+guides.html             Legacy redirect -> / (kept so old /guides.html links still work).
+                        Marked noindex so it does not compete with the homepage.
+states/*.html           40 standalone state pages (real crawlable URLs for Local SEO).
+assets/ok-*.jpg         Images used by the site.
+sitemap.xml             Search-engine sitemap (lists / + all 40 state pages).
+robots.txt              Points crawlers to the sitemap.
+
+HOW IT WORKS (SEO)
+------------------
+- The homepage lives at the root URL "/" via index.html — this is the strongest URL
+  on the site, so the content sits there directly (no redirect, no wasted authority).
+- canonical, Open Graph and JSON-LD all point to "/" so all ranking signals consolidate.
+- /guides.html only exists for backward compatibility and is noindex + redirect to "/".
 
 HOW TO DEPLOY
 -------------
 1. Upload the WHOLE folder contents to the root of your web host
    (e.g. Netlify, Cloudflare Pages, GitHub Pages, Vercel, or any static host / cPanel public_html).
 2. Make sure the files sit at the domain root so URLs look like:
-      https://www.fishtableinsider.com/
-      https://www.fishtableinsider.com/guides.html
+      https://www.fishtableinsider.com/                       (homepage = index.html)
       https://www.fishtableinsider.com/states/ohio.html
       https://www.fishtableinsider.com/sitemap.xml
       https://www.fishtableinsider.com/robots.txt
 3. In Google Search Console, add the property and submit sitemap.xml.
 
+(Optional, recommended) Add a real 301 redirect from /guides.html to / at the server level:
+   - Netlify / Cloudflare Pages: add a "_redirects" file with:  /guides.html  /  301
+   - Apache (.htaccess):  Redirect 301 /guides.html /
+   This is cleaner than the HTML redirect, though the HTML redirect already works.
+
 ADMIN PANEL
 -----------
-- Click "Admin" in the top nav, or go to guides.html#/admin
+- Click "Admin" in the top nav, or go to  https://www.fishtableinsider.com/#/admin
 - Username: admin
 - Password: insider2026
-  (Change these in guides.html -> const ADMIN = { ... })
+  (Change these in index.html -> const ADMIN = { ... })
 - From Admin you can add/edit/delete guides and export collected emails (CSV).
 
 EMAIL CAPTURE
@@ -37,7 +50,7 @@ EMAIL CAPTURE
 - By default, signups are stored in the visitor's browser (localStorage) and
   exportable from the Admin > Subscribers panel.
 - For real-time delivery to your inbox, create a free Formspree form and paste its
-  endpoint into:  guides.html -> const FORM_ENDPOINT = 'https://formspree.io/f/xxxx';
+  endpoint into:  index.html -> const FORM_ENDPOINT = 'https://formspree.io/f/xxxx';
   (Also update FORM_ENDPOINT inside each states/*.html if you want state pages to post too.)
 
 REGENERATING STATE PAGES / SITEMAP
@@ -46,6 +59,8 @@ REGENERATING STATE PAGES / SITEMAP
   (kept in the parent CURSOR folder). Edit the STATES data / BASE_URL there and run:
       node build-states.js
   then re-copy states/, sitemap.xml and robots.txt into this folder.
+- If you edit the main site, edit the source guides.html in the parent folder and
+  copy it here as index.html (the homepage filename).
 
 NOTE
 ----
